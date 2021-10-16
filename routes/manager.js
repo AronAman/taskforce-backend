@@ -1,5 +1,25 @@
 const router = require('express').Router();
+const jwt = require('jsonwebtoken');
+
 const { search, findAll, findOne, create, update, deleteOne, toggleStatus } = require('../controllers/employee');
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
+router.use((req, res, next) => {
+  const auth = req.headers.authorization;
+  if (!auth && !auth.toLocaleLowerCase().startsWith('bearer ')) return res.status(401).end();
+  const token = auth.substring(7);
+  try {
+    const decodedToken = jwt.verify(token, JWT_SECRET);
+
+    if (decodedToken.user.account.position !== 'manager') return res.status(403).end();
+
+    next();
+  } catch (err) {
+    console.log(err.message);
+    res.status(401).end();
+  }
+});
 
 router.get('/', async (req, res) => {
   const query = req.query.s;
@@ -7,7 +27,7 @@ router.get('/', async (req, res) => {
   try {
     if (query) {
       const filtered = await search(query);
-      return res.json(filtered); // returns search results
+      return res.json(filtered);
     }
     const result = await findAll();
     res.json(result);
