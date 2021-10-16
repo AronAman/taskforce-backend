@@ -40,10 +40,9 @@ const schema = new mongoose.Schema({
   },
   position: {
     type: String,
-    default: 'manager',
     enum: {
       values: ['manager', 'developer', 'designer', 'tester', 'devops'],
-      message: '{value} is not supported'
+      message: '{VALUE} is not supported'
     },
     required: true
   },

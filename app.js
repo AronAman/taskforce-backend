@@ -1,4 +1,5 @@
 const express = require('express');
+require('express-async-errors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -6,6 +7,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
+const { errorHandler } = require('./utils/middlewares');
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/users');
 const managerRouter = require('./routes/manager');
@@ -31,5 +33,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/api/user', userRouter);
 app.use('/api/manage', managerRouter);
+app.use(errorHandler);
 
 module.exports = app;

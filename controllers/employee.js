@@ -21,7 +21,7 @@ const findOne = (id) => {
 };
 
 const create = (obj) => {
-  const { name, national_id, phone_number, email, date_of_birth, status } = obj;
+  const { name, national_id, phone_number, email, date_of_birth, status, position } = obj;
 
   const randNo = Math.floor(Math.random() * (1, 9999) + 1);
   const empCode = `000${randNo}`;
@@ -34,22 +34,24 @@ const create = (obj) => {
     phone_number,
     email,
     date_of_birth: new Date(date_of_birth).toISOString(),
-    status
+    status,
+    position: position ? position : 'manager'
   });
   return emp.save();
 };
 
 const update = (id, obj) => {
-  const { name, national_id, phone_number, email, date_of_birth, status } = obj;
+  const { name, national_id, phone_number, email, date_of_birth, status, position } = obj;
   const data = {
     name,
     national_id,
     phone_number,
     email,
     date_of_birth: new Date(date_of_birth).toISOString(),
-    status
+    status,
+    position
   };
-  return Employee.findByIdAndUpdate(id, data, { new: true });
+  return Employee.findByIdAndUpdate(id, data, { new: true, runValidators: true });
 };
 
 const deleteOne = (id) => {
@@ -59,7 +61,7 @@ const deleteOne = (id) => {
 const toggleStatus = async (id) => {
   const emp = await Employee.findById(id);
 
-  if (!emp) { throw ('not found'); }
+  if (!emp) return null;
 
   emp.status = emp.status === 'active' ? 'inactive' : 'active';
 
