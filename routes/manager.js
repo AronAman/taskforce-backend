@@ -27,6 +27,7 @@ router.get('/:id', async (req, res) => {
 
 router.post('/create', async (req, res) => {
   const savedEmp = await create(req.body);
+  if (savedEmp.error) return res.status(400).json(savedEmp);
   res.status(201).json(savedEmp);
 
 });

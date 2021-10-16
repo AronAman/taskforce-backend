@@ -36,6 +36,7 @@ const schema = new mongoose.Schema({
       values: ['active', 'inactive'],
       message: '{VALUE} is not supported'
     },
+    default: 'active',
     required: [true, 'status is required']
   },
   position: {
@@ -44,6 +45,7 @@ const schema = new mongoose.Schema({
       values: ['manager', 'developer', 'designer', 'tester', 'devops'],
       message: '{VALUE} is not supported'
     },
+    default: 'manager',
     required: true
   },
   CreateDate: {

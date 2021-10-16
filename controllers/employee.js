@@ -1,4 +1,5 @@
 const Employee = require('../models/employee');
+const { employeeVal } = require('../utils/validators');
 
 const search = (query) => {
   return Employee.find({
@@ -21,6 +22,10 @@ const findOne = (id) => {
 };
 
 const create = (obj) => {
+  const { error } = employeeVal(obj);
+  console.log(error);
+  if (error) return { error: error.details[0].message };
+
   const { name, national_id, phone_number, email, date_of_birth, status, position } = obj;
 
   const randNo = Math.floor(Math.random() * (1, 9999) + 1);
@@ -41,6 +46,9 @@ const create = (obj) => {
 };
 
 const update = (id, obj) => {
+  const { error } = employeeVal(obj);
+  if (error) return { error: error.details[0].message };
+
   const { name, national_id, phone_number, email, date_of_birth, status, position } = obj;
   const data = {
     name,

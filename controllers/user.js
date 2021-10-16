@@ -6,13 +6,18 @@ const Employee = require('../models/employee');
 const empController = require('./employee');
 
 const JWT_SECRET = process.env.JWT_SECRET;
+const { loginVal, emailVal } = require('../utils/validators');
+
 
 const getUser = (id) => {
   return User.findById(id).populate('account');
 };
 
 const signup = async (obj) => {
+
   const newManager = await empController.create(obj);
+  if (newManager.error) return { error: newManager };
+
   const newUser = new User({
     account: newManager.id
   });
@@ -30,9 +35,12 @@ const updatePassword = async (id, password) => {
 };
 
 const login = async (obj) => {
+  const error = loginVal(obj);
+  if (error) return { error: error.details[0].message };
+
   const { email, password } = obj;
   const manager = await Employee.findOne({ email, position: 'manager' });
-  if (!manager) throw { error: 'incorrect credentials' };
+  if (!manager) return { error: 'incorrect credentials' };
 
   const user = await User.findOne({ manager: manager.id }).populate('account', { name: 1, email: 1, position: 1, code: 1, status: 1 });
   if (!user) return { error: 'incorrect credentials' };
@@ -60,6 +68,9 @@ const confirmEmail = async (token) => {
 };
 
 const resetPasswordFor = async (email) => {
+  const { error } = emailVal(email);
+  if (error) return { error: error.details[0].message };
+
   const user = await User.findOne({ email });
   if (!user) return { error: 'user not found' };
   // const passwordResetToken = jwt.sign({id: user.id}, JWT_SECRET, '24h')
