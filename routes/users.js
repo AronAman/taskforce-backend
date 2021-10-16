@@ -1,12 +1,11 @@
-var express = require('express');
-var router = express.Router();
+const router = require('express').Router();
 
 /* GET users listing. */
 router.get('/', function (req, res) {
-  res.send('respond with a resource');
+  res.send('user endpoint');
 });
 
-router.post('/signup', (req, res) => {
+router.post('/signup', async (req, res) => {
   res.json({});
 });
 

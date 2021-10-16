@@ -3,12 +3,13 @@ const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
   name: {
-    type:String,
+    type: String,
     required: true
   },
   national_id: {
     type: String,
-    required: true
+    required: true,
+    unique: [true]
   },
   code: {
     type: String,
@@ -17,11 +18,13 @@ const schema = new mongoose.Schema({
   },
   phone_number: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   email: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   date_of_birth: {
     type: String,
@@ -38,7 +41,10 @@ const schema = new mongoose.Schema({
   position: {
     type: String,
     default: 'manager',
-    enum: ['manager', 'developer', 'designer', 'tester', 'devops'],
+    enum: {
+      values: ['manager', 'developer', 'designer', 'tester', 'devops'],
+      message: '{value} is not supported'
+    },
     required: true
   },
   CreateDate: {
