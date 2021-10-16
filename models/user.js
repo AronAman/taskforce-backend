@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
-  manager: {
+  account: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Employee'
   },
@@ -20,6 +20,7 @@ schema.set('toJSON', {
     returnedObj.id = doc._id;
     delete returnedObj._id;
     delete returnedObj.__v;
+    delete returnedObj.password;
   }
 });
 
