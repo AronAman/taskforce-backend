@@ -1,67 +1,43 @@
 const router = require('express').Router();
-const { getUser, signup, updatePassword, login, confirmEmail, resetPasswordFor } = require('../controllers/user');
+const { getUser, signup, updatePassword, login, confirmEmail, resetPasswordFor, verifyResetPasswordToken } = require('../controllers/user');
 
 /* GET users listing. */
 router.get('/:id', async (req, res) => {
   const id = req.params.id;
-  try {
-    const user = await getUser(id);
-    res.json(user);
-  } catch (err) {
-    res.status(404).end();
-  }
+  const user = await getUser(id);
+  res.json(user);
+
 });
 
 router.post('/signup', async (req, res) => {
-  try {
-    const newUser = await signup(req.body);
-    res.json(newUser);
-  } catch (err) {
-    if (err.code === 11000) {
-      const field = Object.keys(err.keyValue)[0];
-      return res.status(400).json({
-        error: `${field} is already registered`
-      });
-    }
-    res.status(500).json(err);
-  }
+  const newUser = await signup(req.body);
+  res.json(newUser);
+
 });
 
 router.get('/confirm-email/:token', async (req, res) => {
-  try {
-    const token = req.params.token;
-    const confirmed = await confirmEmail(token);
-    res.json(confirmed);
+  const token = req.params.token;
+  const confirmed = await confirmEmail(token);
+  if (!confirmed.error) return res.status(200).json(confirmed);
+  res.status(403).json(confirmed);
 
-  } catch (err) {
-    res.json(err);
-  }
 });
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  try {
-    if (!email || !password) throw { error: 'incorrect user or password' };
-    const result = await login({ email, password });
-    res.json(result);
-  } catch (error) {
-    res.json(error);
-  }
+
+  const resp = await login({ email, password });
+  if (!resp.error) return res.json(resp);
+  res.status(400).json(resp);
+
 });
 
 router.post('/change-password/:id', async (req, res) => {
   const id = req.params.id;
   const password = req.body.password;
 
-  try {
-    if (!id || !password) throw ({ error: 'invalid id or password' });
-    const user = await updatePassword(id, password);
-    if (!user) throw { error: 'user not found' };
-    res.json({ success: 'password updated' });
-  } catch (err) {
-    console.log(err);
-    res.json(err);
-  }
+  const resp = await updatePassword(id, password);
+  if (resp) return res.json({ success: 'password updated' });
 
 });
 
@@ -73,7 +49,9 @@ router.post('/reset-password', (req, res) => {
 });
 
 router.get('/reset-password/:token', (req, res) => {
-  res.json({});
+  const token = req.params.token;
+  const resp = verifyResetPasswordToken(token);
+  res.json(resp);
 });
 
 module.exports = router;

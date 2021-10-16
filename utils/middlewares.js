@@ -21,7 +21,9 @@ const checkAuth = (req, res, next) => {
 const errorHandler = (err, req, res, next) => {
   switch (err.name) {
     case 'JsonWebTokenError':
-      return res.status(400).json({ error: 'invalid token' });
+      return res.status(403).json({ error: 'invalid token' });
+    case 'TokenExpiredError':
+      return res.status(403).json({ error: 'token expired' });
     case 'CastError':
       return res.status(400).json({ error: 'malformed id' });
     case 'MongoServerError':
