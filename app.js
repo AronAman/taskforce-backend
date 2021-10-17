@@ -13,7 +13,7 @@ const userRouter = require('./routes/users');
 const managerRouter = require('./routes/manager');
 const app = express();
 
-mongoose.connect('mongodb://localhost/task-force', {
+mongoose.connect(process.env.MONGODB_URL, {
   autoIndex: true
 })
   .then(() => {
