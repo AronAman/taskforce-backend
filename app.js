@@ -6,12 +6,38 @@ const logger = require('morgan');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
+const swaggerUI = require('swagger-ui-express');
+const swaggerJsDoc = require('swagger-jsdoc');
 
 const { errorHandler } = require('./utils/middlewares');
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/users');
 const managerRouter = require('./routes/manager');
 const app = express();
+
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    info: {
+      title: 'taskforce api',
+      description: 'Employee Management API',
+      contact: {
+        name: 'Aron Aman'
+      }
+    },
+    servers: [
+      {
+        url: 'http://localhost:3000',
+        description: 'Dev server'
+      },
+    ]
+  },
+  apis: ['./routes/*.js']
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 mongoose.connect(process.env.MONGODB_URL, {
   autoIndex: true

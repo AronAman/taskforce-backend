@@ -5,6 +5,18 @@ const { search, findAll, findOne, create, update, deleteOne, toggleStatus, welco
 
 router.use(checkAuth);
 
+
+/** 
+ * @swagger
+ * /api/manage:
+ *   get:
+ *     description: searches if query 's' is set or else returns all employees
+ *     responses:
+ *       '200':
+ *          description: successful response
+ *       '401':
+ *          description: authorization failed
+ */
 router.get('/', async (req, res) => {
   const query = req.query.s;
 
