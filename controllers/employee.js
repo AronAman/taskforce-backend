@@ -1,5 +1,6 @@
 const Employee = require('../models/employee');
 const { employeeVal } = require('../utils/validators');
+const sendMail = require('../utils/mail');
 
 const search = (query) => {
   return Employee.find({
@@ -23,7 +24,7 @@ const findOne = (id) => {
 
 const create = (obj) => {
   const { error } = employeeVal(obj);
-  console.log(error);
+
   if (error) return { error: error.details[0].message };
 
   const { name, national_id, phone_number, email, date_of_birth, status, position } = obj;
@@ -76,4 +77,14 @@ const toggleStatus = async (id) => {
   return emp.save();
 };
 
-module.exports = { search, findAll, findOne, create, update, deleteOne, toggleStatus };
+const welcomeEmployee = (obj) => {
+  /* 
+  send welcome email
+   */
+  const { email } = obj;
+  
+  return sendMail(email, 'Account created', `<p>Welcome ${obj.name}. Your account with the company task-force has been successfully created.</p>`);
+
+};
+
+module.exports = { search, findAll, findOne, create, update, deleteOne, toggleStatus, welcomeEmployee };

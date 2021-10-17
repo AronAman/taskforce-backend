@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const { checkAuth } = require('../utils/middlewares');
-const { search, findAll, findOne, create, update, deleteOne, toggleStatus } = require('../controllers/employee');
+const { search, findAll, findOne, create, update, deleteOne, toggleStatus, welcomeEmployee } = require('../controllers/employee');
 
 router.use(checkAuth);
 
@@ -28,6 +28,8 @@ router.get('/:id', async (req, res) => {
 router.post('/create', async (req, res) => {
   const savedEmp = await create(req.body);
   if (savedEmp.error) return res.status(400).json(savedEmp);
+  const emailResp = await welcomeEmployee(savedEmp);
+  console.log(emailResp);
   res.status(201).json(savedEmp);
 
 });
